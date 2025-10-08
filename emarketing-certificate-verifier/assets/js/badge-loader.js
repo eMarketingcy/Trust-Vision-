@@ -56,20 +56,40 @@
                     </div>
                 `;
                 placeholder.innerHTML = badgeHtml;
-                
-                // --- NEW INTERACTION LOGIC ---
-                const badge = placeholder.querySelector('.footer-trust-badge');
-                if(!badge) return;
 
-                // For desktop: show on hover, hide when mouse leaves the entire component
-                placeholder.addEventListener('mouseenter', () => badge.classList.add('tooltip-show'));
-                placeholder.addEventListener('mouseleave', () => badge.classList.remove('tooltip-show'));
+                const badge = placeholder.querySelector('.footer-trust-badge');
+                const tooltip = placeholder.querySelector('.ftb-tooltip');
+                if(!badge || !tooltip) return;
+
+                let hideTimeout;
+
+                // Show tooltip on hover
+                const showTooltip = () => {
+                    clearTimeout(hideTimeout);
+                    badge.classList.add('tooltip-show');
+                };
+
+                // Hide tooltip with slight delay to allow moving to tooltip
+                const hideTooltip = () => {
+                    hideTimeout = setTimeout(() => {
+                        badge.classList.remove('tooltip-show');
+                    }, 100);
+                };
+
+                // For desktop: show on hover
+                badge.addEventListener('mouseenter', showTooltip);
+                badge.addEventListener('mouseleave', hideTooltip);
+
+                // Keep tooltip visible when hovering over it
+                tooltip.addEventListener('mouseenter', showTooltip);
+                tooltip.addEventListener('mouseleave', hideTooltip);
 
                 // For mobile & accessibility: toggle on click/tap
-                placeholder.addEventListener('click', (e) => {
+                badge.addEventListener('click', (e) => {
                     e.stopPropagation();
+                    clearTimeout(hideTimeout);
                     const isShown = badge.classList.toggle('tooltip-show');
-                    
+
                     // Close all other badges when one is opened
                     if (isShown) {
                         document.querySelectorAll('.footer-trust-badge').forEach(otherBadge => {
