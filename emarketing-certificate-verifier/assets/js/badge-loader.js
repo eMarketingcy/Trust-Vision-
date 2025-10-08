@@ -62,15 +62,23 @@
                 if(!badge || !tooltip) return;
 
                 let hideTimeout;
+                let isTouchDevice = false;
 
-                // Show tooltip on hover
+                // Detect touch device
+                badge.addEventListener('touchstart', () => {
+                    isTouchDevice = true;
+                }, { once: true, passive: true });
+
+                // Show tooltip on hover (desktop only)
                 const showTooltip = () => {
+                    if (isTouchDevice) return;
                     clearTimeout(hideTimeout);
                     badge.classList.add('tooltip-show');
                 };
 
                 // Hide tooltip with slight delay to allow moving to tooltip
                 const hideTooltip = () => {
+                    if (isTouchDevice) return;
                     hideTimeout = setTimeout(() => {
                         badge.classList.remove('tooltip-show');
                     }, 100);
@@ -84,7 +92,7 @@
                 tooltip.addEventListener('mouseenter', showTooltip);
                 tooltip.addEventListener('mouseleave', hideTooltip);
 
-                // For mobile & accessibility: toggle on click/tap
+                // For mobile & touch devices: toggle on click/tap
                 badge.addEventListener('click', (e) => {
                     e.stopPropagation();
                     clearTimeout(hideTimeout);
