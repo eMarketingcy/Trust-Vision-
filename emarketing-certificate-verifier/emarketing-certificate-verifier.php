@@ -27,15 +27,42 @@ function ecv_activate() {
     require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
     dbDelta($sql);
     add_rewrite_rule('^vision-badge/loader.js$', 'index.php?vision_badge_loader=1', 'top');
+    add_rewrite_rule('^verify-certificate/?$', 'index.php?ecv_verify_cert=1', 'top');
     flush_rewrite_rules();
 }
 register_activation_hook(__FILE__, 'ecv_activate');
 function ecv_deactivate(){ flush_rewrite_rules(); }
 register_deactivation_hook(__FILE__, 'ecv_deactivate');
-function ecv_add_query_vars($vars) { $vars[] = 'vision_badge_loader'; return $vars; }
+function ecv_add_query_vars($vars) { $vars[] = 'vision_badge_loader'; $vars[] = 'ecv_verify_cert'; return $vars; }
 add_filter('query_vars', 'ecv_add_query_vars');
 function ecv_serve_badge_loader_js() { if (get_query_var('vision_badge_loader')) { $js_path = ECV_PLUGIN_PATH . 'assets/js/badge-loader.js'; if (file_exists($js_path)) { header('Content-Type: application/javascript; charset=utf-8'); header('Cache-Control: public, max-age=86400'); readfile($js_path); exit; } else { status_header(404); exit; } } }
 add_action('template_redirect', 'ecv_serve_badge_loader_js');
+function ecv_handle_verify_cert_page() {
+    if (get_query_var('ecv_verify_cert')) {
+        wp_enqueue_style('ecv-frontend-style', ECV_PLUGIN_URL . 'assets/css/frontend-style.css');
+
+        if (!isset($_GET['cert'])) {
+            wp_die('<div class="ecv-container" style="padding: 2rem; text-align: center;"><p>Please provide a certificate ID to begin verification.</p></div>');
+        }
+
+        global $wpdb;
+        $table_name = ECV_TABLE_NAME;
+        $cert_id = sanitize_text_field($_GET['cert']);
+        $certificate = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_name WHERE certificate_id = %s", $cert_id));
+
+        get_header();
+
+        if ($certificate) {
+            include(ECV_PLUGIN_PATH . 'templates/certificate-valid-template.php');
+        } else {
+            include(ECV_PLUGIN_PATH . 'templates/certificate-invalid-template.php');
+        }
+
+        get_footer();
+        exit;
+    }
+}
+add_action('template_redirect', 'ecv_handle_verify_cert_page');
 function ecv_admin_menu(){add_menu_page('Certificate Verifier','Certificates','manage_options','ecv-main-menu','ecv_manage_certificates_page','dashicons-shield-alt',25); add_submenu_page('ecv-main-menu','Manage Certificates','Manage','manage_options','ecv-main-menu'); add_submenu_page('ecv-main-menu','Add New Certificate','Add New','manage_options','ecv-add-new','ecv_add_new_certificate_page'); add_submenu_page('ecv-main-menu','Embed Badge','Embed Badge','manage_options','ecv-embed-badge','ecv_embed_badge_page');}
 add_action('admin_menu', 'ecv_admin_menu');
 function ecv_manage_certificates_page() { global $wpdb; $table_name = ECV_TABLE_NAME; $message = ''; $message_type = ''; if (isset($_GET['action']) && isset($_GET['cert_id'])) { $action = sanitize_key($_GET['action']); $cert_id = intval($_GET['cert_id']); if (isset($_GET['_wpnonce']) && wp_verify_nonce($_GET['_wpnonce'], $action . '_' . $cert_id)) { if ($action === 'delete') { $wpdb->delete($table_name, ['id' => $cert_id], ['%d']); $message = 'Certificate deleted successfully.'; $message_type = 'success'; } elseif ($action === 'toggle_status') { $current_status = $wpdb->get_var($wpdb->prepare("SELECT status FROM $table_name WHERE id = %d", $cert_id)); $new_status = ($current_status === 'active') ? 'expired' : 'active'; $wpdb->update($table_name, ['status' => $new_status], ['id' => $cert_id]); $message = 'Certificate status updated.'; $message_type = 'success'; } } else { $message = 'Security check failed. Action aborted.'; $message_type = 'error'; } } $certificates = $wpdb->get_results("SELECT * FROM $table_name ORDER BY created_at DESC"); echo '<div class="wrap">'; echo '<h1>Manage Certificates <a href="?page=ecv-add-new" class="page-title-action">Add New</a></h1>'; if (!empty($message)) { echo '<div class="notice notice-' . esc_attr($message_type) . ' is-dismissible"><p>' . esc_html($message) . '</p></div>'; } echo '<table class="wp-list-table widefat fixed striped">'; echo '<thead><tr><th>Certificate ID</th><th>Company Name</th><th>Website</th><th>Level</th><th>Status</th><th>Actions</th></tr></thead>'; echo '<tbody>'; if ($certificates) { foreach ($certificates as $cert) { $delete_nonce = wp_create_nonce('delete_' . $cert->id); $status_nonce = wp_create_nonce('toggle_status_' . $cert->id); $delete_link = "?page=ecv-main-menu&action=delete&cert_id={$cert->id}&_wpnonce={$delete_nonce}"; $status_link = "?page=ecv-main-menu&action=toggle_status&cert_id={$cert->id}&_wpnonce={$status_nonce}"; $status_text = ($cert->status === 'active') ? 'Expire' : 'Activate'; $status_class = ($cert->status === 'active') ? 'active' : 'expired'; echo '<tr>'; echo '<td><strong>' . esc_html($cert->certificate_id) . '</strong></td>'; echo '<td>' . esc_html($cert->company_name) . '</td>'; echo '<td><a href="' . esc_url('http://' . $cert->website_url) . '" target="_blank">' . esc_html($cert->website_url) . '</a></td>'; echo '<td>Level ' . esc_html($cert->level) . '</td>'; echo '<td><span style="font-weight:bold; color:' . ($status_class === 'active' ? '#27ae60' : '#c0392b') . ';">' . esc_html(ucfirst($cert->status)) . '</span></td>'; echo '<td>'; echo '<a href="' . esc_url($status_link) . '">' . esc_html($status_text) . '</a> | '; echo '<a href="' . esc_url($delete_link) . '" style="color:#a00;" onclick="return confirm(\'Are you sure you want to permanently delete this certificate?\');">Delete</a>'; echo '</td>'; echo '</tr>'; } } else { echo '<tr><td colspan="6">No certificates found.</td></tr>'; } echo '</tbody></table></div>';}
@@ -83,9 +110,8 @@ function ecv_get_badge_data($request) {
         return new WP_Error('not_found', 'Active certificate not found', ['status' => 404]);
     }
 
-    $verify_page_query = new WP_Query(['post_type'=>'page', 'post_status'=>'publish', 'posts_per_page'=>1, 's'=>'[certificate_verifier]']);
-    $verify_url = $verify_page_query->have_posts() ? get_permalink($verify_page_query->posts[0]->ID) : home_url('/');
-    
+    $verify_url = home_url('/verify-certificate/');
+
     $features_map = [ 1=>['Verified business identity'], 2=>['Verified business identity','Address &amp; contact confirmed'], 3=>['Verified business identity','Address &amp; contact confirmed','Social media audit'], 4=>['Verified business identity','Address &amp; contact confirmed','Social media audit','Reputation check'], 5=>['Verified business identity','Address &amp; contact confirmed','5★ reviews audited','Annual re-verification'], ];
 
     $data = [ 'cert_id' => $certificate->certificate_id, 'level' => $certificate->level, 'issuer' => 'eMarketing.cy', 'date_iso' => $certificate->verification_date, 'date_formatted' => date("M j, Y", strtotime($certificate->verification_date)), 'features' => $features_map[$certificate->level] ?? [], 'verify_link' => add_query_arg('cert', $certificate->certificate_id, $verify_url), ];
