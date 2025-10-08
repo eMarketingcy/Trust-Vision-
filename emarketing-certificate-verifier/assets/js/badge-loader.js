@@ -3,9 +3,17 @@
     const badgePlaceholders = document.querySelectorAll('.trusted-vision-badge-embed');
     if (badgePlaceholders.length === 0) return;
 
-    // Get the base URL for API calls and assets from the script tag itself
+    // Get the base URL from the script src (the WordPress site hosting this script)
     const scriptTag = document.currentScript;
-    const siteUrl = scriptTag.src.split('/wp-content/')[0];
+    if (!scriptTag || !scriptTag.src) {
+        console.error('Trusted Vision Badge: Unable to determine script source URL');
+        return;
+    }
+
+    // Extract the WordPress site URL from the script's src attribute
+    // The script URL format: https://your-wordpress-site.com/vision-badge/loader.js
+    const scriptUrl = new URL(scriptTag.src);
+    const siteUrl = scriptUrl.origin;
     const cssUrl = siteUrl + '/wp-content/plugins/emarketing-certificate-verifier/assets/css/badge-style.css';
 
     // Load the CSS file dynamically
