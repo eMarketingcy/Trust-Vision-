@@ -1,0 +1,23 @@
+/* --- Public Trusted Vision Badge & Tooltip Styles --- */
+.trusted-vision-badge-embed{display:inline-block;vertical-align:middle}.footer-trust-badge{--ftb-accent:#01abe4;--ftb-fg:#fff;--ftb-bg:rgba(255,255,255,.06);--ftb-bd:rgba(255,255,255,.18);--ftb-text-dark:#0a2a66;position:relative;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:999px;color:var(--ftb-fg);background:var(--ftb-bg);border:1px solid var(--ftb-bd);text-decoration:none;font:600 14px/1.2 ui-sans-serif,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;-webkit-backdrop-filter:saturate(140%) blur(8px);backdrop-filter:saturate(140%) blur(8px);transition:transform .15s ease,background .15s ease,border-color .15s ease;cursor:pointer}
+.footer-trust-badge:hover{transform:translateY(-1px)}
+.footer-trust-badge .ftb-icon{display:inline-flex}
+.footer-trust-badge .ftb-text{letter-spacing:.2px}
+.footer-trust-badge .ftb-level{display:inline-flex;align-items:center;justify-content:center;padding:2px 8px;border-radius:999px;font-size:12px;font-weight:800;letter-spacing:.3px;color:var(--ftb-accent);background:color-mix(in oklab,var(--ftb-accent) 14%,transparent);border:1px solid color-mix(in oklab,var(--ftb-accent) 36%,transparent)}
+.footer-trust-badge.is-light{--ftb-fg:var(--ftb-text-dark);--ftb-bg:rgba(10,42,102,.06);--ftb-bd:rgba(10,42,102,.18);color:var(--ftb-fg)}
+.footer-trust-badge .ftb-tooltip{position:absolute!important;z-index:99999;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%) translateY(6px) scale(.98);visibility:hidden;opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease;background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,.35)),rgba(255,255,255,.65);-webkit-backdrop-filter:saturate(140%) blur(16px);backdrop-filter:saturate(140%) blur(16px);border:1px solid rgba(0,0,0,.08);border-radius:14px;box-shadow:0 12px 40px rgba(0,0,0,.12);color:#111;width:min(320px,calc(100vw - 32px));padding:12px 14px;font-size:13px;line-height:1.4;margin:0!important;overflow:hidden; text-align: left;}
+/* UPDATED LINE: Removed the ":hover" selector and now only use the .tooltip-show class */
+.footer-trust-badge.tooltip-show .ftb-tooltip{visibility:visible!important;opacity:1!important;transform:translateX(-50%) translateY(0) scale(1);pointer-events:auto}
+.ftb-tip-header{font-size:.95rem;font-weight:700;letter-spacing:.2px;margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid rgba(0,0,0,.08)}
+.ftb-tip-meta{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px 10px;margin:6px 0 8px}
+.ftb-tip-meta>div{display:grid;gap:2px}
+.ftb-tip-meta span{font-size:11px;letter-spacing:.3px;text-transform:uppercase;color:#4a4a4a}
+.ftb-tip-meta strong{font-weight:700;color:#111}
+.ftb-tip-meta code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;padding:1px 4px;border-radius:6px;background:rgba(0,0,0,.05);color:#333}
+.ftb-tip-chips{display:flex;flex-wrap:wrap;gap:6px;list-style:none;margin:6px 0 8px;padding:0}
+.ftb-tip-chips li{font-size:12px;padding:6px 8px;border-radius:999px;background:rgba(255,255,255,.7);border:1px solid rgba(0,0,0,.08);color:#4a4a4a;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);white-space:nowrap}
+.ftb-tip-chips li::before{content:"✓";color:#01abe4;font-weight:700;margin-right:6px}
+.ftb-tip-verify{display:inline-block;margin-top:8px;font-size:12px;font-weight:600;color:#01abe4;text-decoration:none;padding:6px 10px;border-radius:10px;background:rgba(1,171,228,.1);border:1px solid rgba(1,171,228,.18)}
+.ftb-tip-verify:hover{background:rgba(1,171,228,.14)}
+.tv-note{font-size:11px;color:#4a4a4a;margin-top:4px}
+@media (max-width:420px){.ftb-tip-meta{grid-template-columns:1fr 1fr}}
