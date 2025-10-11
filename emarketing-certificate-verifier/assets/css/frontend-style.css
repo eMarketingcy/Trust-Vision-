@@ -1,145 +1,210 @@
-/* eMarketing Certificate Verifier Styles */
+/* --- Modern Certificate Verification Styles v2.0 --- */
+:root {
+    --ecv-blue: #0693e3;
+    --ecv-green: #4CAF50;
+    --ecv-red: #c0392b;
+    --ecv-text-dark: #2c3e50;
+    --ecv-text-light: #7f8c8d;
+    --ecv-bg-light: #f0f2f5;
+    --ecv-bg-card: #ffffff;
+    --ecv-border-color: #e4e7eb;
+}
+
 body.ecv-verification-page {
-    background-color: #f0f2f5;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    background-color: var(--ecv-bg-light);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--ecv-text-dark);
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     min-height: 100vh;
     margin: 0;
-    padding: 20px;
+    padding: 2rem 1rem;
     box-sizing: border-box;
 }
 
 .ecv-container {
     width: 100%;
-    max-width: 600px;
+    max-width: 700px;
     margin: auto;
 }
 
-.ecv-card {
-    background-color: #fff;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+.ecv-container .ecv-card {
+    background-color: var(--ecv-bg-card);
+    border-radius: 16px;
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--ecv-border-color);
     overflow: hidden;
-    border: 1px solid #ddd;
+    text-align: center;
 }
 
-.ecv-header {
-    background-color: #0693e3;
-    color: white;
-    padding: 30px 25px;
-    text-align: center;
-    border-bottom: 1px solid #ddd;
+.ecv-container .ecv-card-header {
+    padding: 2.5rem 1.5rem;
+    background: linear-gradient(45deg, var(--ecv-blue), #057ac3);
+    color: #fff;
+}
+
+.ecv-invalid-container .ecv-card-header {
+    background: linear-gradient(45deg, var(--ecv-red), #a5281b);
+}
+
+.ecv-container .ecv-icon-wrapper {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
     display: flex;
     justify-content: center;
+    align-items: center;
+    margin: 0 auto 1rem;
 }
 
-.ecv-header-invalid {
-    background-color: #c0392b;
+.ecv-icon-success, .ecv-icon-invalid {
+    width: 32px;
+    height: 32px;
+    color: #fff;
 }
 
-.ecv-container .ecv-header h2 {
-    margin: 0;
-    font-size: 22px;
+.ecv-container .ecv-card-header h1 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.75rem;
     font-weight: 600;
-    text-transform: uppercase;
-    color: #fff !important;
-    
+    letter-spacing: 0.5px;
+    color:#ccffda;
 }
 
-.ecv-status-icon-valid, .ecv-status-icon-invalid {
-    display: inline-block;
-    font-size: 33px;
-    line-height: 1;
-    margin-right: 10px;
-}
-
-.ecv-body {
-    padding: 25px;
-}
-
-.ecv-intro {
-    font-size: 16px;
-    color: #555;
-    text-align: center;
-    margin-bottom: 25px;
-}
-
-.ecv-company-name {
-    font-size: 28px;
-    font-weight: bold;
-    text-align: center;
-    color: #4CAF50;
-    padding: 15px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    margin-bottom: 25px;
-    text-transform: uppercase;
-}
-
-.ecv-details {
-    margin-bottom: 25px;
-    border-top: 1px solid #eee;
-    padding-top: 15px;
-}
-
-.ecv-details div {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 0;
-    border-bottom: 1px solid #eee;
-    font-size: 15px;
-}
-
-.ecv-details span {
-    color: #666;
-}
-
-.ecv-details code {
-    background-color: #eee;
-    padding: 3px 6px;
-    border-radius: 4px;
-    font-family: monospace;
-}
-
-.ecv-chips {
-    list-style: none;
-    padding: 0;
+.ecv-container .ecv-card-header .ecv-subtitle {
     margin: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: center;
+    font-size: 1rem;
+    opacity: 0.9;
 }
 
-.ecv-chips li {
-    background-color: #eaf6ec;
-    color: #0693e3;
-    padding: 8px 12px;
-    border-radius: 20px;
-    font-size: 14px;
+.ecv-card-body {
+    padding: 2rem 1.5rem;
+}
+
+.ecv-container .ecv-company-name {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--ecv-text-dark);
+    margin-bottom: 2rem;
+    word-break: break-word;
+}
+
+.ecv-details-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    text-align: left;
+    margin-bottom: 2.5rem;
+    border-top: 1px solid var(--ecv-border-color);
+    padding-top: 2rem;
+}
+
+.ecv-detail-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.ecv-container .ecv-label {
+    font-size: 0.8rem;
+    color: var(--ecv-text-light);
+    margin-bottom: 0.25rem;
+    text-transform: uppercase;
     font-weight: 500;
 }
 
-.ecv-footer {
-    background-color: #f9f9f9;
-    padding: 20px 25px;
-    text-align: center;
-    border-top: 1px solid #ddd;
+.ecv-container .ecv-value {
+    font-size: 1.1rem;
+    font-weight: 600;
+    word-break: break-all;
 }
 
-.ecv-footer p {
-    font-size: 13px;
-    color: #777;
-    margin: 0 0 15px 0;
+.ecv-value.ecv-code {
+    font-family: 'SF Mono', 'Menlo', 'monospace';
+    background-color: var(--ecv-bg-light);
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    display: inline-block;
+}
+
+.ecv-value a {
+    color: var(--ecv-blue);
+    text-decoration: none;
+}
+.ecv-value a:hover {
+    text-decoration: underline;
+}
+
+.ecv-features {
+    text-align: left;
+    border-top: 1px solid var(--ecv-border-color);
+    padding-top: 2rem;
+}
+
+.ecv-container .ecv-features h2 {
+    font-size: 1.25rem;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.ecv-features-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+.ecv-features-list li {
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
+}
+
+.ecv-features-list svg {
+    width: 20px;
+    height: 20px;
+    color: var(--ecv-green);
+    margin-right: 0.75rem;
+    flex-shrink: 0;
+}
+
+.ecv-card-footer {
+    background-color: var(--ecv-bg-light);
+    padding: 1.5rem;
+    font-size: 0.9rem;
+    color: var(--ecv-text-light);
+}
+
+.ecv-card-footer p {
+    margin: 0 0 1rem 0;
 }
 
 .ecv-home-link {
-    font-size: 14px;
-    color: #2980b9;
+    font-weight: 600;
+    color: var(--ecv-blue);
     text-decoration: none;
+    transition: opacity 0.2s ease;
 }
 .ecv-home-link:hover {
-    text-decoration: underline;
+    opacity: 0.8;
+}
+p.cerd {
+    font-size: 11px;
+}
+
+/* Responsive Adjustments */
+@media (min-width: 600px) {
+    .ecv-card-body {
+        padding: 2.5rem;
+    }
+    .ecv-details-grid {
+        grid-template-columns: 1fr 1fr; /* 2 columns on larger screens */
+    }
+    .ecv-features-list {
+        grid-template-columns: 1fr 1fr; /* 2 columns for features */
+    }
 }
